@@ -26,9 +26,9 @@
     <div class="main">
         <div class="products">
         
-        <div class="search-results" v-if="this.items.length && this.lastterm">Found {{items.length}} results for search term {{lastterm}}.</div>
+        <div class="search-results" v-if="results.length && this.lastterm">Found {{results.length}} results for search term {{lastterm}}.</div>
 
-        <div class="product" v-for="(item,index) in items">
+        <div class="product" v-for="(item,index) in items" v-bind:key="item.id">
             <div>
                 <div class="product-image"><img v-bind:src="item.photo"></div>
             </div>
@@ -45,20 +45,24 @@
         </div>
         <div class="cart">
             <h2>Shopping Cart</h2>
-            <ul>
-                <li v-for="item in cart" class="cart-item">
+            <transition-group name="fade" tag="ul">
+                <!-- group of items uses transition-group, must have v-bind:key -->
+                <li v-for="item in cart" class="cart-item" v-bind:key="item.id">
                     <div class="item-title">{{item.title}}</div>
                     <span class="item-qty">{{item.qty}} @ {{item.price|currency}}: {{(item.price * item.qty)|currency}}</span>
                     <button class="btn" v-on:click="inc_cart(item)">+</button>
                     <button class="btn" v-on:click="dec_cart(item)">-</button>
                 </li>   
-            </ul>
-            <div v-if="this.cart.length">
-                <div>Total: {{total|currency}}</div>
-            </div>
-            <div v-else class="empty-cart">
+            </transition-group>
+            <transition name="fade">    
+                <div v-if="this.cart.length">
+                    <div>Total: {{total|currency}}</div>
+                </div>
+            </transition>
+            <div v-if="!this.cart.length" class="empty-cart">
                 <div>Cart is empty?  ;(</div>
-            </div>            
+            </div>      
+
         </div>
     </div>
 </div>

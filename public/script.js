@@ -1,17 +1,20 @@
 // console.log(Vue);
 
+var MAXLOAD = 10;
+
 new Vue ({
     el: "#app",
     data : {
         total: 0,
-        items: [  // overwitten by search
+        results: [],    // full results from server
+        items: [        // overwitten by search
             { id: 1, title: 'Records', price: 1.50, photo: '' },
             { id: 2, title: 'Vibrators', price: 2.50, photo: '' },
             { id: 3, title: 'Ben Wa Balls', price: 3.50, photo: '' }
             ],
         cart: [],
         term: 'anime',
-        lastterm: ''
+        lastterm: 'anime'
     },
     methods : {
         addItem: function (idx) {
@@ -54,9 +57,16 @@ new Vue ({
                 .get( '/search/'.concat(this.term))
                 .then( function(res) {
                     // console.log(res);
-                    this.items = [];  // empty array
-                    // populate items
-                    res.data.forEach( item => { this.items.push({id: item.id, title: item.title, price: item.height/100, photo: item.link}); } );  // Fudge price value
+                    this.results = [];  // empty array
+                    // populate items - fudge price value
+                    res.data.forEach( item => { 
+                        this.results.push({id: item.id, title: item.title, price: item.height/100, photo: item.link}); 
+                        // console.log('pushed item: ' + item.id);
+                    });  
+                    console.log('# items: ' + this.results.length);
+                    for (var ix=0; ix < MAXLOAD; ix++) {
+                        this.items.push() = this.results[ix];
+                    }
                     this.lastterm = this.term;
                 });
         }
@@ -67,7 +77,7 @@ new Vue ({
             return '$'.concat(parseFloat(price).toFixed(2));
         }
     },
-    mounted: function () {
+    mounted: function () {  // lifecycle hook
         this.search();
     },
 })
