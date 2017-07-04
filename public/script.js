@@ -50,7 +50,7 @@ new Vue ({
                 }
             }
         },
-        search : function () {
+        search: function () {
             // console.log(this.$http);
             this.items = [];  // empty array
             this.$http
@@ -61,14 +61,22 @@ new Vue ({
                     // populate items - fudge price value
                     res.data.forEach( item => { 
                         this.results.push({id: item.id, title: item.title, price: item.height/100, photo: item.link}); 
-                        // console.log('pushed item: ' + item.id);
                     });  
                     console.log('# items: ' + this.results.length);
-                    for (var ix=0; ix < MAXLOAD; ix++) {
-                        this.items.push() = this.results[ix];
-                    }
+                    this.appendItems();
+
                     this.lastterm = this.term;
                 });
+        },
+        appendItems: function () {  // make sure to use slice not splice
+            // console.log('appendItems 1');
+            // console.log( 'IL: '+ this.items.length + '  RL: ' + this.results.length);
+            if (this.items.length < this.results.length) {
+                // console.log('appendItems 2');
+                var idx = this.items.length;
+                this.items = this.items.concat(this.results.slice(idx,idx+MAXLOAD)); // slice(start,end)
+                // console.log( 'IL: '+ this.items.length + '  RL: ' + this.results.length);
+            }
         }
     },
     filters: {
@@ -79,5 +87,21 @@ new Vue ({
     },
     mounted: function () {  // lifecycle hook
         this.search();
+
+        var self = this;  // for use in scrollMonitor function below.
+
+        // console.log(scrollMonitor);
+        // https://github.com/stutrek/scrollMonitor
+        // The code is vanilla javascript and has no external dependencies, 
+        // however the script cannot be put in the head.
+        var elem = document.getElementById('product-list-bottom');
+        var watcher = scrollMonitor.create(elem);
+        watcher.enterViewport( function () { 
+            // console.log('enter viewport'); 
+            self.appendItems();
+        });
+        // watcher.exitViewport( function () { console.log('exit viewport') });
+
     },
 })
+
