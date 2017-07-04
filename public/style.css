@@ -22,7 +22,7 @@ button:focus, input:focus {
     opacity: 0.8;
 }
 
-[v-cloak] {
+[v-cloak] {  /* usedd on app tag to hide div until vue is loaded */
     display: none !important;
 }
 

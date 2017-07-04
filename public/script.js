@@ -51,6 +51,10 @@ new Vue ({
             }
         },
         search: function () {
+            if(!this.term.length) {
+                alert('Search term required!');
+                return;
+            }
             // console.log(this.$http);
             this.items = [];  // empty array
             this.$http
@@ -77,6 +81,13 @@ new Vue ({
                 this.items = this.items.concat(this.results.slice(idx,idx+MAXLOAD)); // slice(start,end)
                 // console.log( 'IL: '+ this.items.length + '  RL: ' + this.results.length);
             }
+        }
+    },
+    computed: {
+        noMoreItems: function() {
+            var aout = (this.results.length === this.items.length) && (this.items.length > 0);
+            console.log('No more items return: ' + aout)
+            return aout;            
         }
     },
     filters: {
